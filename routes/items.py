@@ -27,18 +27,28 @@ async def read_items(
 
 
 @router.get("/{id}")
-def read_hero(id: int, session=Depends(get_session)):
+def read_item(id: int, session=Depends(get_session)):
     item = session.get(Item, id)
     if not item:
         raise HTTPException(status_code=404, detail="Item not found")
     return item
 
 
-# TODO: Update
+@router.patch("/{id}")
+def update_item(id: int, item: Item, session=Depends(get_session)):
+    currentItem = session.get(Item, id)
+    if not currentItem:
+        raise HTTPException(status_code=404, detail="Item not found")
+    data = item.model_dump(exclude_unset=True)
+    currentItem.sqlmodel_update(data)
+    session.add(currentItem)
+    session.commit()
+    session.refresh(currentItem)
+    return currentItem
 
 
 @router.delete("/{id}")
-def delete_hero(id: int, session=Depends(get_session)):
+def delete_item(id: int, session=Depends(get_session)):
     item = session.get(Item, id)
     if not item:
         raise HTTPException(status_code=404, detail="Item not found")
