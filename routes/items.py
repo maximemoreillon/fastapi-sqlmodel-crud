@@ -23,6 +23,6 @@ async def read_items(
     limit: Annotated[int, Query(le=100)] = 100,
     session=Depends(get_session),
 ):
-
-    items = session.exec(select(Item).offset(offset).limit(limit)).all()
+    statement = select(Item).offset(offset).limit(limit)
+    items = session.exec(statement).all()
     return {"items": items, "limit": limit, "offset": offset}
