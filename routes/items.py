@@ -1,5 +1,7 @@
-from fastapi import APIRouter, Depends, HTTPException, status, Response
+from fastapi import APIRouter, Depends, HTTPException, status, Response, Query
 from db import get_session
+from typing import Annotated
+from sqlmodel import select
 
 # from db import Item
 from models.item import Item
@@ -8,7 +10,7 @@ router = APIRouter(prefix="/items")
 
 
 @router.post("/")
-def create_hero(item: Item, session=Depends(get_session)):
+def create_item(item: Item, session=Depends(get_session)):
     session.add(item)
     session.commit()
     session.refresh(item)
@@ -16,6 +18,11 @@ def create_hero(item: Item, session=Depends(get_session)):
 
 
 @router.get("/")
-async def handle(session=Depends(get_session)):
-    items = session.query(Item).all()
-    return {"items": items}
+async def read_items(
+    offset: int = 0,
+    limit: Annotated[int, Query(le=100)] = 100,
+    session=Depends(get_session),
+):
+
+    items = session.exec(select(Item).offset(offset).limit(limit)).all()
+    return {"items": items, "limit": limit, "offset": offset}
