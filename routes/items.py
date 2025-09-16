@@ -30,7 +30,7 @@ async def read_items(
 def read_hero(id: int, session=Depends(get_session)):
     item = session.get(Item, id)
     if not item:
-        raise HTTPException(status_code=404, detail="Hero not found")
+        raise HTTPException(status_code=404, detail="Item not found")
     return item
 
 
@@ -41,7 +41,7 @@ def read_hero(id: int, session=Depends(get_session)):
 def delete_hero(id: int, session=Depends(get_session)):
     item = session.get(Item, id)
     if not item:
-        raise HTTPException(status_code=404, detail="Hero not found")
+        raise HTTPException(status_code=404, detail="Item not found")
     session.delete(item)
     session.commit()
     return {"ok": True}
