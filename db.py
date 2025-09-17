@@ -1,10 +1,11 @@
 from sqlmodel import Session, SQLModel, create_engine
+from dotenv import load_dotenv
+from os import getenv
 
-# TODO: replace by PG
-sqlite_url = f"sqlite:///database.db"
+load_dotenv()
 
-connect_args = {"check_same_thread": False}
-engine = create_engine(sqlite_url, connect_args=connect_args)
+DATABASE_URL = getenv("DATABASE_URL", "postgresql://localhost:5432/sqlmodel-crud")
+engine = create_engine(DATABASE_URL)
 
 
 def get_session():
